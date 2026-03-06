@@ -1620,6 +1620,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/bull@^4.10.4":
+  version "4.10.4"
+  resolved "https://registry.yarnpkg.com/@types/bull/-/bull-4.10.4.tgz#c7a09c3151d079db5088588719ba2982e2b15dcf"
+  integrity sha512-A+8uxa5GbzKcS7kZ9Z1OcOeSyrvVmfHtZi3VIrH1Gws0G0sTknB2SRllxTaAYhycGn7+nC0Pb8VjxIyZiTM81A==
+  dependencies:
+    bull "*"
+
 "@types/connect@*":
   version "3.4.38"
   resolved "https://registry.yarnpkg.com/@types/connect/-/connect-3.4.38.tgz#5ba7f3bc4fbbdeaff8dded952e5ff2cc53f8d858"
@@ -2765,7 +2772,7 @@ buffer@^6.0.3:
     base64-js "^1.3.1"
     ieee754 "^1.2.1"
 
-bull@^4.16.5:
+bull@*, bull@^4.16.5:
   version "4.16.5"
   resolved "https://registry.yarnpkg.com/bull/-/bull-4.16.5.tgz#855a17e7880862a231dac3c8a6392c77668ce49d"
   integrity sha512-lDsx2BzkKe7gkCYiT5Acj02DpTwDznl/VNN7Psn7M3USPG7Vs/BaClZJJTAG+ufAR9++N1/NiUTdaFBWDIl5TQ==
