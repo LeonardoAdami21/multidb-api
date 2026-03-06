@@ -1,37 +1,4 @@
 services:
-  api:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      MYSQL_HOST: ${MYSQL_HOST}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MONGO_URI: ${MONGO_URI}
-      JWT_SECRET: ${JWT_SECRET}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-      API_BASE_URL: ${API_BASE_URL}
-      SQLITE_STORAGE_PATH: /data/sqlite
-      BACKUP_STORAGE_PATH: /data/backups
-    ports:
-      - '7000:3000'
-    volumes:
-      - ./sqlite_data:/data/sqlite
-      - ./backup_data:/data/backups
-      - ./logs:/app/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: unless-stopped
   mysql:
     image: mysql:8.0
     environment:
@@ -88,26 +55,12 @@ services:
       timeout: 3s
       retries: 5
 
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./promdata:/prometheus
-    ports:
-      - '9091:9090'
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.retention.time=15d'
 
-  grafana:
-    image: grafana/grafana:latest
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-    volumes:
-      - ./grafanadata:/var/lib/grafana
-    ports:
-      - '3001:3000'
-    depends_on:
-      - prometheus
-
+volumes:
+  pgdata:
+  mysqldata:
+  mongodata:
+  redisdata:
+  sqlite_data:
+  backup_data:
+  logs:
