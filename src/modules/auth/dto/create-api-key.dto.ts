@@ -3,6 +3,7 @@ import {
   IsArray,
   IsDateString,
   IsEnum,
+  IsISO8601,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -31,6 +32,6 @@ export class CreateApiKeyDto {
     example: '2022-01-01T00:00:00.000Z',
   })
   @IsOptional()
-  @IsDateString()
-  expiresAt?: Date;
+  @IsISO8601()
+  expiresAt?: string;
 }
