@@ -8,5 +8,8 @@
   "vs-code-prettier-eslint.prettierLast": false,
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma-insider"
   } // set as "true" to run 'prettier' last not first
 }

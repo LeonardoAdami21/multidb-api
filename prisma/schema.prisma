@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -10,14 +11,14 @@ datasource db {
 // ─── Tenants ───────────────────────────────────────────────
 
 model Tenant {
-  id           String        @id @default(uuid())
-  name         String
-  slug         String        @unique
-  email        String        @unique
-  plan         Plan          @default(FREE)
-  status       TenantStatus  @default(ACTIVE)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id        String       @id @default(uuid())
+  name      String
+  slug      String       @unique
+  email     String       @unique
+  plan      Plan         @default(FREE)
+  status    TenantStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   databases    Database[]
   apiKeys      ApiKey[]
@@ -44,19 +45,19 @@ enum TenantStatus {
 // ─── Databases ────────────────────────────────────────────
 
 model Database {
-  id            String     @id @default(uuid())
+  id            String   @id @default(uuid())
   tenantId      String
   name          String
   engine        DbEngine
   connectionUrl String
-  status        DbStatus   @default(PROVISIONING)
-  sizeBytes     BigInt     @default(0)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  status        DbStatus @default(PROVISIONING)
+  sizeBytes     BigInt   @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  tenant        Tenant     @relation(fields: [tenantId], references: [id])
-  schemas       DbSchema[]
-  backups       Backup[]
+  tenant  Tenant     @relation(fields: [tenantId], references: [id])
+  schemas DbSchema[]
+  backups Backup[]
 
   @@unique([tenantId, name])
 }
@@ -88,8 +89,8 @@ model DbSchema {
   appliedAt    DateTime?
   createdAt    DateTime     @default(now())
 
-  database     Database     @relation(fields: [databaseId], references: [id])
-  migrations   Migration[]
+  database   Database    @relation(fields: [databaseId], references: [id])
+  migrations Migration[]
 
   @@unique([databaseId, version])
 }
@@ -111,7 +112,7 @@ model Migration {
   status       MigrationStatus @default(PENDING)
   createdAt    DateTime        @default(now())
 
-  schema       DbSchema        @relation(fields: [schemaId], references: [id])
+  schema DbSchema @relation(fields: [schemaId], references: [id])
 }
 
 enum MigrationStatus {
@@ -135,24 +136,24 @@ model ApiKey {
   lastUsedAt DateTime?
   createdAt  DateTime  @default(now())
 
-  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
 }
 
 // ─── Webhooks ─────────────────────────────────────────────
 
 model Webhook {
-  id        String            @id @default(uuid())
+  id        String   @id @default(uuid())
   tenantId  String
   name      String
   url       String
   secret    String
   events    String[]
   models    String[]
-  isActive  Boolean           @default(true)
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  tenant    Tenant            @relation(fields: [tenantId], references: [id])
+  tenant     Tenant            @relation(fields: [tenantId], references: [id])
   deliveries WebhookDelivery[]
 }
 
@@ -168,7 +169,7 @@ model WebhookDelivery {
   createdAt   DateTime  @default(now())
   deliveredAt DateTime?
 
-  webhook     Webhook   @relation(fields: [webhookId], references: [id])
+  webhook Webhook @relation(fields: [webhookId], references: [id])
 }
 
 // ─── Backups ──────────────────────────────────────────────
@@ -186,8 +187,8 @@ model Backup {
   createdAt   DateTime     @default(now())
   completedAt DateTime?
 
-  tenant      Tenant       @relation(fields: [tenantId], references: [id])
-  database    Database     @relation(fields: [databaseId], references: [id])
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  database Database @relation(fields: [databaseId], references: [id])
 }
 
 enum BackupType {
@@ -216,7 +217,7 @@ model UsageRecord {
   databases    Int      @default(0)
   computedAt   DateTime @default(now())
 
-  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, period])
 }
@@ -235,7 +236,7 @@ model AuditLog {
   metadata   Json?
   createdAt  DateTime @default(now())
 
-  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId, createdAt])
   @@index([tenantId, resource])
@@ -253,7 +254,7 @@ model Alert {
   resolvedAt DateTime?
   createdAt  DateTime      @default(now())
 
-  tenant     Tenant        @relation(fields: [tenantId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
 }
 
 enum AlertType {
