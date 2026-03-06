@@ -48,6 +48,8 @@ async function bootstrap() {
     .setTitle('MultiDB API')
     .addTag('auth', 'Authenticação e Autorização')
     .addTag('database', 'Bancos de Dados')
+    .addTag('schema', 'Schema')
+    .addTag('webhook', 'Webhooks')
     .addBearerAuth()
     .addApiKey({ name: 'x-api-key', type: 'apiKey', in: 'header' })
     .setDescription(

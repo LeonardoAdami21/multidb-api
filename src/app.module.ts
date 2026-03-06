@@ -7,6 +7,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { AdaptersModule } from './modules/adapters/adapters.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { SchemaModule } from './modules/schema/schema.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SchemaModule } from './modules/schema/schema.module';
     AdaptersModule,
     BillingModule,
     SchemaModule,
+    WebhookModule,
   ],
 })
 export class AppModule {}

@@ -27,7 +27,7 @@ import { SchemaService } from './schema.service';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: 'database/:databaseId/schema' })
-export class SchemaEngineController {
+export class SchemaController {
   constructor(private engine: SchemaService) {}
 
   @Post()
