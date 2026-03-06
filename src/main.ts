@@ -1,8 +1,50 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({ level: 'info' }),
+  });
+  app.enableVersioning({ type: VersioningType.URI });
+
+  app.setGlobalPrefix('v1');
+
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-API-Key',
+      'X-Tenant-ID',
+    ],
+  });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+
+  const config = new DocumentBuilder()
+    .setTitle('MultiDB API')
+    .setDescription(
+      'Plataforma de Bancos de Dados como Serviço — PostgreSQL, MySQL, MongoDB, SQLite',
+    )
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('/v1/docs', app, document);
+
+  const port = process.env.APP_PORT || 3000;
+  await app.listen(port, () => {
+    console.log(`Application is running on: http://localhost:${port}/v1/docs`);
+  });
 }
 bootstrap();
