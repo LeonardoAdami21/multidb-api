@@ -47,6 +47,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('MultiDB API')
     .addTag('auth', 'Authenticação e Autorização')
+    .addTag('database', 'Bancos de Dados')
     .addBearerAuth()
     .addApiKey({ name: 'x-api-key', type: 'apiKey', in: 'header' })
     .setDescription(
