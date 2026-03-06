@@ -4,6 +4,9 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { winstonConfig } from './config/wiston.config';
+import { HttpExceptionFilter } from './common/filters/http-exepction';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -33,8 +36,19 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  // Global interceptors
+  app.useGlobalInterceptors(
+    new TransformInterceptor(),
+    new MetricsInterceptor(),
+  );
+
   const config = new DocumentBuilder()
     .setTitle('MultiDB API')
+    .addTag('auth', 'Authenticação e Autorização')
+    .addBearerAuth()
+    .addApiKey({ name: 'x-api-key', type: 'apiKey', in: 'header' })
     .setDescription(
       'Plataforma de Bancos de Dados como Serviço — PostgreSQL, MySQL, MongoDB, SQLite',
     )
