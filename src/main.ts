@@ -3,10 +3,11 @@ import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { winstonConfig } from './config/wiston.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger({ level: 'info' }),
+    logger: WinstonModule.createLogger(winstonConfig),
   });
   app.enableVersioning({ type: VersioningType.URI });
 
