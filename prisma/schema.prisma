@@ -1,0 +1,272 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Tenants ───────────────────────────────────────────────
+
+model Tenant {
+  id           String        @id @default(uuid())
+  name         String
+  slug         String        @unique
+  email        String        @unique
+  plan         Plan          @default(FREE)
+  status       TenantStatus  @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  databases    Database[]
+  apiKeys      ApiKey[]
+  webhooks     Webhook[]
+  backups      Backup[]
+  usageRecords UsageRecord[]
+  auditLogs    AuditLog[]
+  alerts       Alert[]
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+// ─── Databases ────────────────────────────────────────────
+
+model Database {
+  id            String     @id @default(uuid())
+  tenantId      String
+  name          String
+  engine        DbEngine
+  connectionUrl String
+  status        DbStatus   @default(PROVISIONING)
+  sizeBytes     BigInt     @default(0)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  tenant        Tenant     @relation(fields: [tenantId], references: [id])
+  schemas       DbSchema[]
+  backups       Backup[]
+
+  @@unique([tenantId, name])
+}
+
+enum DbEngine {
+  POSTGRESQL
+  MYSQL
+  MONGODB
+  SQLITE
+}
+
+enum DbStatus {
+  PROVISIONING
+  ACTIVE
+  MIGRATING
+  ERROR
+  DELETED
+}
+
+// ─── Schemas ─────────────────────────────────────────────
+
+model DbSchema {
+  id           String       @id @default(uuid())
+  databaseId   String
+  version      Int
+  definition   Json
+  prismaSchema String
+  status       SchemaStatus @default(DRAFT)
+  appliedAt    DateTime?
+  createdAt    DateTime     @default(now())
+
+  database     Database     @relation(fields: [databaseId], references: [id])
+  migrations   Migration[]
+
+  @@unique([databaseId, version])
+}
+
+enum SchemaStatus {
+  DRAFT
+  APPLIED
+  ROLLED_BACK
+  FAILED
+}
+
+model Migration {
+  id           String          @id @default(uuid())
+  schemaId     String
+  name         String
+  sql          String
+  appliedAt    DateTime?
+  rolledBackAt DateTime?
+  status       MigrationStatus @default(PENDING)
+  createdAt    DateTime        @default(now())
+
+  schema       DbSchema        @relation(fields: [schemaId], references: [id])
+}
+
+enum MigrationStatus {
+  PENDING
+  APPLIED
+  ROLLED_BACK
+  FAILED
+}
+
+// ─── API Keys ─────────────────────────────────────────────
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  tenantId   String
+  name       String
+  keyHash    String    @unique
+  keyPrefix  String
+  scopes     String[]
+  isActive   Boolean   @default(true)
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+}
+
+// ─── Webhooks ─────────────────────────────────────────────
+
+model Webhook {
+  id        String            @id @default(uuid())
+  tenantId  String
+  name      String
+  url       String
+  secret    String
+  events    String[]
+  models    String[]
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  tenant    Tenant            @relation(fields: [tenantId], references: [id])
+  deliveries WebhookDelivery[]
+}
+
+model WebhookDelivery {
+  id          String    @id @default(uuid())
+  webhookId   String
+  event       String
+  payload     Json
+  statusCode  Int?
+  response    String?
+  attempts    Int       @default(0)
+  success     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  deliveredAt DateTime?
+
+  webhook     Webhook   @relation(fields: [webhookId], references: [id])
+}
+
+// ─── Backups ──────────────────────────────────────────────
+
+model Backup {
+  id          String       @id @default(uuid())
+  tenantId    String
+  databaseId  String
+  label       String?
+  type        BackupType   @default(MANUAL)
+  status      BackupStatus @default(PENDING)
+  sizeBytes   BigInt       @default(0)
+  storagePath String?
+  expiresAt   DateTime?
+  createdAt   DateTime     @default(now())
+  completedAt DateTime?
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  database    Database     @relation(fields: [databaseId], references: [id])
+}
+
+enum BackupType {
+  MANUAL
+  DAILY
+  WEEKLY
+  PITR
+}
+
+enum BackupStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+// ─── Billing ──────────────────────────────────────────────
+
+model UsageRecord {
+  id           String   @id @default(uuid())
+  tenantId     String
+  period       String
+  requests     BigInt   @default(0)
+  storageBytes BigInt   @default(0)
+  databases    Int      @default(0)
+  computedAt   DateTime @default(now())
+
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, period])
+}
+
+// ─── Audit ────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  tenantId   String
+  apiKeyId   String?
+  action     String
+  resource   String
+  resourceId String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, resource])
+}
+
+// ─── Alerts ───────────────────────────────────────────────
+
+model Alert {
+  id         String        @id @default(uuid())
+  tenantId   String
+  type       AlertType
+  severity   AlertSeverity
+  message    String
+  metadata   Json?
+  resolvedAt DateTime?
+  createdAt  DateTime      @default(now())
+
+  tenant     Tenant        @relation(fields: [tenantId], references: [id])
+}
+
+enum AlertType {
+  STORAGE_WARNING
+  STORAGE_CRITICAL
+  SLOW_QUERIES
+  ERROR_RATE
+  BACKUP_FAILED
+  QUOTA_EXCEEDED
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
