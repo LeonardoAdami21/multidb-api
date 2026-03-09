@@ -9,6 +9,7 @@ import { BillingModule } from './modules/billing/billing.module';
 import { SchemaModule } from './modules/schema/schema.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
 import { QueryEngineModule } from './modules/query-engine/query-engine.module';
+import { BackupModule } from './modules/backup/backup.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { QueryEngineModule } from './modules/query-engine/query-engine.module';
     SchemaModule,
     WebhookModule,
     QueryEngineModule,
+    BackupModule,
   ],
 })
 export class AppModule {}
