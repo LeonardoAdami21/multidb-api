@@ -11,6 +11,7 @@ import { WebhookModule } from './modules/webhook/webhook.module';
 import { QueryEngineModule } from './modules/query-engine/query-engine.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
+import { SdkGeneratorModule } from './modules/sdk-generator/sdk-generator.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MetricsModule } from './modules/metrics/metrics.module';
     QueryEngineModule,
     BackupModule,
     MetricsModule,
+    SdkGeneratorModule,
   ],
 })
 export class AppModule {}
