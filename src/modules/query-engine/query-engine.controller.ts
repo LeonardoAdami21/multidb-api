@@ -30,10 +30,10 @@ import { ScopeGuard } from '../../common/guards/scope.guard';
 import { RequireScope } from '../../common/decorators/scope.decorator';
 import { QueryDto } from './dto/create-query-engine.dto';
 
-@ApiTags('Data')
+@ApiTags('data')
 @ApiSecurity('ApiKey')
 @UseGuards(ApiKeyGuard)
-@Controller({ path: 'data/:databaseId/:model', version: '1' })
+@Controller({ path: 'data/:databaseId/:model'})
 export class QueryEngineController {
   constructor(private engine: QueryEngineService) {}
 
