@@ -13,8 +13,8 @@ import {
 import { AuditService } from './audit.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@ApiTags('metrics')
-@Controller('metrics')
+@ApiTags('audit')
+@Controller('audit')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class AuditController {
