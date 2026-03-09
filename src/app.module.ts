@@ -10,6 +10,7 @@ import { SchemaModule } from './modules/schema/schema.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
 import { QueryEngineModule } from './modules/query-engine/query-engine.module';
 import { BackupModule } from './modules/backup/backup.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { BackupModule } from './modules/backup/backup.module';
     WebhookModule,
     QueryEngineModule,
     BackupModule,
+    MetricsModule,
   ],
 })
 export class AppModule {}
