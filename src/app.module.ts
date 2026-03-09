@@ -8,6 +8,7 @@ import { AdaptersModule } from './modules/adapters/adapters.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { SchemaModule } from './modules/schema/schema.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
+import { QueryEngineModule } from './modules/query-engine/query-engine.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WebhookModule } from './modules/webhook/webhook.module';
     BillingModule,
     SchemaModule,
     WebhookModule,
+    QueryEngineModule,
   ],
 })
 export class AppModule {}
