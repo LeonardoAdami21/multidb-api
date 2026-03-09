@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  UseGuards,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Request,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiSecurity,
+  ApiOperation,
+  ApiProperty,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
+  ApiCreatedResponse,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { BillingService } from './billing.service';
-import { CreateBillingDto } from './dto/create-billing.dto';
-import { UpdateBillingDto } from './dto/update-billing.dto';
+import { IsEnum } from 'class-validator';
 
+class ChangePlanDto {
+  @ApiProperty({ enum: ['FREE', 'STARTER', 'PRO', 'ENTERPRISE'] })
+  @IsEnum(['FREE', 'STARTER', 'PRO', 'ENTERPRISE'])
+  plan: 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE';
+}
+
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('billing')
+@ApiTags('billing')
 export class BillingController {
-  constructor(private readonly billingService: BillingService) {}
+  constructor(private billing: BillingService) {}
 
-  @Post()
-  create(@Body() createBillingDto: CreateBillingDto) {
-    return this.billingService.create(createBillingDto);
+  @Get('usage')
+  @ApiOperation({
+    summary: 'Ver uso atual e quotas',
+    description: 'Rota atual e as quotas',
+  })
+  @ApiOkResponse({ description: 'Retorna o uso atual e quotas' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
+  getUsage(@Request() req: any) {
+    return this.billing.getUsage(req.user.tenantId);
   }
 
-  @Get()
-  findAll() {
-    return this.billingService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.billingService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBillingDto: UpdateBillingDto) {
-    return this.billingService.update(+id, updateBillingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.billingService.remove(+id);
+  @Post('plan')
+  @ApiOperation({
+    summary: 'Alterar plano',
+    description: 'Rota para alterar o plano',
+  })
+  @ApiCreatedResponse({ description: 'Plano alterado com sucesso' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
+  changePlan(@Request() req: any, @Body() dto: ChangePlanDto) {
+    return this.billing.changePlan(req.user.tenantId, dto.plan);
   }
 }
