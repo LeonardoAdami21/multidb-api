@@ -12,6 +12,7 @@ import { QueryEngineModule } from './modules/query-engine/query-engine.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { SdkGeneratorModule } from './modules/sdk-generator/sdk-generator.module';
+import { TenantModule } from './modules/tenant/tenant.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SdkGeneratorModule } from './modules/sdk-generator/sdk-generator.module
     BackupModule,
     MetricsModule,
     SdkGeneratorModule,
+    TenantModule,
   ],
 })
 export class AppModule {}
