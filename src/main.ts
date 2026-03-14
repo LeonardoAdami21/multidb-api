@@ -54,6 +54,7 @@ async function bootstrap() {
     .addTag('metrics', 'Modulo de Metricas')
     .addTag('data', 'Modulo de Schema Engine')
     .addTag('schema', 'Modulo de Schema')
+    .addTag("tenant", "Modulo de Tenants")
     .addTag('webhook', 'Modulo de Webhooks')
     .addBearerAuth()
     .addApiKey({ name: 'x-api-key', type: 'apiKey', in: 'header' })
