@@ -20,13 +20,13 @@ import { SdkGeneratorService } from './sdk-generator.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @ApiTags('sdk')
+@Controller('sdk')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller({ path: 'database/:databaseId/sdk' })
 export class SdkGeneratorController {
   constructor(private sdkGen: SdkGeneratorService) {}
 
-  @Get('typescript')
+  @Get('typescript/:databaseId')
   @Header('Content-Type', 'application/typescript')
   @Header('Content-Disposition', 'attachment; filename="multidb-client.ts"')
   @ApiOperation({
@@ -40,7 +40,7 @@ export class SdkGeneratorController {
     return this.sdkGen.generateTypeScript(req.user.tenantId, dbId);
   }
 
-  @Get('openapi')
+  @Get('openapi/:databaseId')
   @ApiOperation({
     summary: 'Gerar OpenAPI 3.0 spec para o schema atual',
     description: 'Rota para baixar o OpenAPI 3.0 spec',

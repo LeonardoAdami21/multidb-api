@@ -82,9 +82,9 @@ export class BillingService {
           create: {
             tenantId: db.tenantId,
             period,
-            storageBytes: totalStorage._sum.sizeBytes ?? 0n,
+            storageBytes: Number(totalStorage._sum.sizeBytes) ?? 0n,
           },
-          update: { storageBytes: totalStorage._sum.sizeBytes ?? 0n },
+          update: { storageBytes: Number(totalStorage._sum.sizeBytes) ?? 0n },
         });
 
         // Check storage alerts

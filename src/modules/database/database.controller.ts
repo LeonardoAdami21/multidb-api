@@ -29,7 +29,7 @@ import { CreateDatabaseDto } from './dto/create-database.dto';
 export class DatabaseController {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  @Post()
+  @Post("")
   @ApiOperation({
     summary: 'Provisionar novo banco de dados',
     description: 'Rota para provisionar um novo banco de dados',
@@ -50,7 +50,7 @@ export class DatabaseController {
     return this.databaseService.create(req.user.tenantId, dto);
   }
 
-  @Get()
+  @Get("")
   @ApiOperation({
     summary: 'Listar bancos de dados do tenant',
     description: 'Rota para listar todos os bancos de dados do tenant',
