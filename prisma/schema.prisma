@@ -51,7 +51,7 @@ model Database {
   engine        DbEngine
   connectionUrl String
   status        DbStatus @default(PROVISIONING)
-  sizeBytes     BigInt   @default(0)
+  sizeBytes     Int   @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -181,7 +181,7 @@ model Backup {
   label       String?
   type        BackupType   @default(MANUAL)
   status      BackupStatus @default(PENDING)
-  sizeBytes   BigInt       @default(0)
+  sizeBytes   Int       @default(0)
   storagePath String?
   expiresAt   DateTime?
   createdAt   DateTime     @default(now())
@@ -212,8 +212,8 @@ model UsageRecord {
   id           String   @id @default(uuid())
   tenantId     String
   period       String
-  requests     BigInt   @default(0)
-  storageBytes BigInt   @default(0)
+  requests     Int   @default(0)
+  storageBytes Int   @default(0)
   databases    Int      @default(0)
   computedAt   DateTime @default(now())
 

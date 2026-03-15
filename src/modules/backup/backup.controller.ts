@@ -25,13 +25,13 @@ import { CreateBackupDto } from './dto/create-backup.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @ApiTags('backup')
+@Controller('backup')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller({ path: 'database/:databaseId/backups' })
 export class BackupController {
   constructor(private backups: BackupService) {}
 
-  @Post()
+  @Post(':databaseId')
   @ApiOperation({
     summary: 'Criar backup sob demanda',
     description: 'Rota para criar backups sob demanda',
@@ -47,7 +47,7 @@ export class BackupController {
     return this.backups.create(req.user.tenantId, dbId, dto);
   }
 
-  @Get()
+  @Get(':databaseId')
   @ApiOperation({
     summary: 'Listar backups',
     description: 'Rota para listar backups',
@@ -59,7 +59,7 @@ export class BackupController {
     return this.backups.findAll(req.user.tenantId, dbId);
   }
 
-  @Post(':id/restore')
+  @Post(':id/restore/:databaseId')
   @ApiOperation({
     summary: 'Restaurar backup',
     description: 'Rota para restaurar backups',

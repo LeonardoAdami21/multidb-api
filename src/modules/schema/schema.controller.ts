@@ -24,13 +24,13 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { SchemaService } from './schema.service';
 
 @ApiTags('schema')
+@Controller('schema')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller({ path: 'database/:databaseId/schema' })
 export class SchemaController {
   constructor(private engine: SchemaService) {}
 
-  @Post()
+  @Post(':databaseId')
   @ApiOperation({
     summary: 'Criar nova versão de schema',
     description: 'Rota para criar uma nova versão de schema',
@@ -47,7 +47,7 @@ export class SchemaController {
     return this.engine.create(req.user.tenantId, dbId, dto);
   }
 
-  @Post(':id/apply')
+  @Post(':databaseId/:id/apply')
   @ApiOperation({
     summary: 'Aplicar schema (rodar migration)',
     description: 'Rota para aplicar um schema (rodar migration)',
@@ -64,7 +64,7 @@ export class SchemaController {
     return this.engine.applySchema(req.user.tenantId, dbId, id);
   }
 
-  @Post('rollback/:version')
+  @Post(':databaseId/:version/rollback')
   @ApiOperation({
     summary: 'Rollback para versão anterior',
     description: 'Rota para rollback para versão anterior',
@@ -81,7 +81,7 @@ export class SchemaController {
     return this.engine.rollback(req.user.tenantId, dbId, version);
   }
 
-  @Get()
+  @Get(':databaseId')
   @ApiOperation({
     summary: 'Listar versões de schema',
     description: 'Rota para listar todas as versões de schema',
