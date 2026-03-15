@@ -27,7 +27,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 @ApiTags('backup')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller({ path: 'databases/:databaseId/backups' })
+@Controller({ path: 'database/:databaseId/backups' })
 export class BackupController {
   constructor(private backups: BackupService) {}
 
