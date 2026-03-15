@@ -13,7 +13,7 @@ import { BackupModule } from './modules/backup/backup.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { SdkGeneratorModule } from './modules/sdk-generator/sdk-generator.module';
 import { TenantModule } from './modules/tenant/tenant.module';
-import { GraphqlEngineModule } from './modules/graphql-engine/graphql-engine.module';
+import { GraphqlEngineModule } from './modules/prisma/graphql-engine/graphql-engine.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -47,12 +47,12 @@ import { CrudGeneratorModule } from './modules/crud-generator/crud-generator.mod
 
     // Cron jobs
     ScheduleModule.forRoot(),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-      playground: process.env.NODE_ENV !== 'production',
-      path: '/graphql',
-    }),
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   autoSchemaFile: true,
+    //   playground: process.env.NODE_ENV !== 'production',
+    //   path: '/graphql',
+    // }),
     DatabaseModule,
     AdaptersModule,
     BillingModule,

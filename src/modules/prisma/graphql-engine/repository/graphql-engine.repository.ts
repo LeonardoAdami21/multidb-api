@@ -1,8 +1,7 @@
 // src/modules/graphql-engine/graphql-engine.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma.service';
 import { ModelDefinition } from 'src/modules/schema/dto/create-schema.dto';
-
 
 @Injectable()
 export class GraphqlEngineRepository {
