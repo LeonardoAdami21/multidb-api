@@ -1,8 +1,7 @@
 // src/adapters/postgresql.adapter.ts
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { DatabaseAdapter } from './interface/IAdapter';
 import { Client } from 'pg';
+import { DatabaseAdapter } from './interface/IAdapter';
 @Injectable()
 export class PostgresAdapter implements DatabaseAdapter {
   private readonly logger = new Logger(PostgresAdapter.name);
@@ -12,7 +11,7 @@ export class PostgresAdapter implements DatabaseAdapter {
   async provision(tenantId: string, name: string): Promise<string> {
     const dbName = `tenant_${tenantId.replace(/-/g, '_')}_${name}`;
     const host = process.env.POSTGRES_HOST;
-    const port = Number(process.env.POSTGRES_PORT) as number;
+    const port = Number(process.env.POSTGRES_PORT);
     const user = process.env.POSTGRES_USER;
     const password = process.env.POSTGRES_PASSWORD;
 

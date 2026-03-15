@@ -21,7 +21,7 @@ export class DatabaseRepository {
   ) {}
 
   async create(tenantId: string, dto: CreateDatabaseDto) {
-    const tenant = await this.prisma.tenant.findUniqueOrThrow({
+    const tenant: any = await this.prisma.tenant.findUnique({
       where: { id: tenantId },
     });
 
@@ -103,7 +103,7 @@ export class DatabaseRepository {
         where: { id: dbId },
         data: { status: 'ERROR' },
       });
-      throw err;
+      throw new Error(`Provisioning failed for ${dbId}: ${err.message}`);
     }
   }
 }

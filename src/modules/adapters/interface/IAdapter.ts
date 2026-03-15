@@ -3,7 +3,7 @@ export interface DatabaseAdapter {
   provision(tenantId: string, name: string): Promise<any>;
 
   /** Run initial setup (extensions, collations, etc.) */
-  initialize(connectionUrl: string): Promise<void>;
+  initialize(connectionUrl: string): Promise<any>;
 
   /** Drop the database */
   drop(connectionUrl: string, tenantId: string, name: string): Promise<any>;

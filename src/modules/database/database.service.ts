@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateDatabaseDto } from './dto/create-database.dto';
 import { UpdateDatabaseDto } from './dto/update-database.dto';
 import { DatabaseRepository } from './repository/database.repository';
@@ -14,11 +14,15 @@ export class DatabaseService {
   ) {}
 
   async create(tenantId: string, dto: CreateDatabaseDto) {
-    const connectionUrl = this.crypto.encrypt(dto.name);
-    const db = await this.databaseRepository.create(tenantId, dto);
-    const adapter = this.adapterFactory.get(db.engine);
-    await adapter.initialize(connectionUrl);
-    return db;
+    try {
+      const connectionUrl = this.crypto.encrypt(dto.name);
+      const db = await this.databaseRepository.create(tenantId, dto);
+      const adapter = this.adapterFactory.get(db.engine);
+      await adapter.initialize(connectionUrl);
+      return db;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   async findAll(tenantId: string) {
