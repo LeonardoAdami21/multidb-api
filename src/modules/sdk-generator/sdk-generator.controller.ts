@@ -22,7 +22,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 @ApiTags('sdk')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller({ path: 'databases/:databaseId/sdk' })
+@Controller({ path: 'database/:databaseId/sdk' })
 export class SdkGeneratorController {
   constructor(private sdkGen: SdkGeneratorService) {}
 
