@@ -26,7 +26,12 @@ export class DatabaseService {
   }
 
   async findAll(tenantId: string) {
-    return this.databaseRepository.findAll(tenantId);
+    try {
+      const databases = await this.databaseRepository.findAll(tenantId);
+      return databases;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   async findOne(tenantId: string, id: string) {

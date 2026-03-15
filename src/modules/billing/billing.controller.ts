@@ -27,10 +27,10 @@ class ChangePlanDto {
   plan: 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE';
 }
 
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Controller('billing')
 @ApiTags('billing')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class BillingController {
   constructor(private billing: BillingService) {}
 

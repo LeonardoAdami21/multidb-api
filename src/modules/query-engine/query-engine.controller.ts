@@ -33,11 +33,11 @@ import { QueryDto } from './dto/create-query-engine.dto';
 @ApiTags('data')
 @ApiSecurity('ApiKey')
 @UseGuards(ApiKeyGuard)
-@Controller({ path: 'data/:databaseId/:model'})
+@Controller('data')
 export class QueryEngineController {
   constructor(private engine: QueryEngineService) {}
 
-  @Get()
+  @Get(':databaseId/:model')
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
   @ApiOperation({
@@ -63,10 +63,13 @@ export class QueryEngineController {
     );
   }
 
-  @Get('count')
+  @Get('/:databaseId/:model/count')
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
-  @ApiOperation({ summary: 'Contar registros', description: 'Rota que retorna a quantidade de registros' })
+  @ApiOperation({
+    summary: 'Contar registros',
+    description: 'Rota que retorna a quantidade de registros',
+  })
   @ApiOkResponse({ description: 'Retorna a quantidade de registros' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
@@ -79,7 +82,7 @@ export class QueryEngineController {
     return this.engine.count(req.user.tenantId, dbId, model, query);
   }
 
-  @Get(':id')
+  @Get(':databaseId/:model/:id')
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Buscar registro por ID' })
@@ -100,7 +103,7 @@ export class QueryEngineController {
     );
   }
 
-  @Post()
+  @Post('/:databaseId/:model')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar registro' })
@@ -119,7 +122,7 @@ export class QueryEngineController {
     );
   }
 
-  @Post('bulk')
+  @Post('/:databaseId/:model/bulk')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar múltiplos registros' })
@@ -138,7 +141,7 @@ export class QueryEngineController {
     );
   }
 
-  @Patch(':id')
+  @Patch(':databaseId/:model/:id')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Atualizar registro parcialmente (PATCH)' })
@@ -159,7 +162,7 @@ export class QueryEngineController {
     );
   }
 
-  @Delete(':id')
+  @Delete(':databaseId/:model/:id')
   @RequireScope('db:delete')
   @UseGuards(ScopeGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
