@@ -51,7 +51,7 @@ export class MetricsController {
     return checks;
   }
 
-  @Get('v1/metrics/tenant')
+  @Get('/tenant')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Métricas do tenant',
