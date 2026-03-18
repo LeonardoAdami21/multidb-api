@@ -12,9 +12,21 @@ RUN corepack enable
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
+# Create non-root user
+RUN addgroup -S nodejs && adduser -S nestjs -G nodejs
+
 # Copy configs
 COPY tsconfig*.json ./
 COPY prisma ./prisma
+
+RUN chown -R nestjs:nodejs /app
+
+# Proper tmp permissions (important!)
+RUN chmod 1777 /tmp
+
+# Switch to non-root
+USER nestjs
+
 
 # Generate Prisma client
 RUN npx prisma generate
