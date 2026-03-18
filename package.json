@@ -19,9 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate": "npx prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "hostinger:build": "nest build && yarn prisma generate"
+    "hostinger:build": "nest build && npx prisma generate"
   },
   "dependencies": {
     "@apollo/server": "^5.4.0",

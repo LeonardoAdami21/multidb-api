@@ -12,8 +12,8 @@ COPY src ./src
 
 # Tudo como root, sem troca de usuário no builder
 RUN yarn install --frozen-lockfile
-RUN yarn prisma generate
-RUN yarn build
+RUN npx prisma generate
+RUN npx nest build
 
 # ============================================
 # 2. Production stage (LEAN)
