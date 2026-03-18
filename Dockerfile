@@ -21,7 +21,7 @@ ENV YARN_CACHE_FOLDER=/app/.yarn-cache
 
 USER nestjs
 
-RUN npx prisma generate
+RUN yarn prisma generate
 
 COPY --chown=nestjs:nodejs src ./src
 RUN yarn build
