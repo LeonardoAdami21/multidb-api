@@ -23,6 +23,7 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
+  ApiBody,
 } from '@nestjs/swagger';
 import { QueryEngineService } from './query-engine.service';
 import { ApiKeyGuard } from '../../common/guards/api-key.guard';
@@ -45,9 +46,22 @@ export class QueryEngineController {
     description:
       'Rota que retorna uma lista de registros com filtros e paginação.',
   })
+  @ApiParam({
+    name: 'model',
+    description: 'Modelo do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'databaseId',
+    description: 'ID do banco de dados',
+    required: true,
+  })
   @ApiOkResponse({
     description: 'Retorna uma lista de registros',
   })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
+  @ApiQuery({ type: QueryDto })
   findMany(
     @Request() req: any,
     @Param('databaseId') dbId: string,
@@ -70,6 +84,17 @@ export class QueryEngineController {
     summary: 'Contar registros',
     description: 'Rota que retorna a quantidade de registros',
   })
+  @ApiParam({
+    name: 'model',
+    description: 'Modelo do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'databaseId',
+    description: 'ID do banco de dados',
+    required: true,
+  })
+  @ApiQuery({ type: QueryDto })
   @ApiOkResponse({ description: 'Retorna a quantidade de registros' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
@@ -86,6 +111,25 @@ export class QueryEngineController {
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Buscar registro por ID' })
+  @ApiParam({
+    name: 'model',
+    description: 'Modelo do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'databaseId',
+    description: 'ID do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID do registro',
+    required: true,
+  })
+  @ApiQuery({ type: QueryDto })
+  @ApiOkResponse({ description: 'Retorna um registro' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   findOne(
     @Request() req: any,
     @Param('databaseId') dbId: string,
@@ -107,6 +151,20 @@ export class QueryEngineController {
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar registro' })
+  @ApiParam({
+    name: 'model',
+    description: 'Modelo do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'databaseId',
+    description: 'ID do banco de dados',
+    required: true,
+  })
+  @ApiBody({ type: 'object' })
+  @ApiOkResponse({ description: 'Retorna um registro criado' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   create(
     @Request() req: any,
     @Param('databaseId') dbId: string,
@@ -126,6 +184,20 @@ export class QueryEngineController {
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar múltiplos registros' })
+  @ApiParam({
+    name: 'model',
+    description: 'Modelo do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'databaseId',
+    description: 'ID do banco de dados',
+    required: true,
+  })
+  @ApiBody({ type: 'object' })
+  @ApiOkResponse({ description: 'Retorna um registro criado' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   bulkCreate(
     @Request() req: any,
     @Param('databaseId') dbId: string,
@@ -145,6 +217,25 @@ export class QueryEngineController {
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Atualizar registro parcialmente (PATCH)' })
+  @ApiParam({
+    name: 'model',
+    description: 'Modelo do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'databaseId',
+    description: 'ID do banco de dados',
+    required: true,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID do registro',
+    required: true,
+  })
+  @ApiBody({ type: 'object' })
+  @ApiOkResponse({ description: 'Retorna um registro atualizado' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   update(
     @Request() req: any,
     @Param('databaseId') dbId: string,

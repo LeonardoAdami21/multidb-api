@@ -18,6 +18,7 @@ import {
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import { CreateSchemaDto } from './dto/create-schema.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -35,6 +36,7 @@ export class SchemaController {
     summary: 'Criar nova versão de schema',
     description: 'Rota para criar uma nova versão de schema',
   })
+  @ApiParam({ name: 'databaseId', description: 'ID do banco de dados' })
   @ApiCreatedResponse({ description: 'Schema criado com sucesso' })
   @ApiBadRequestResponse({ description: 'Erro ao criar schema' })
   @ApiUnauthorizedResponse({ description: 'Usuário não autorizado' })
@@ -52,6 +54,8 @@ export class SchemaController {
     summary: 'Aplicar schema (rodar migration)',
     description: 'Rota para aplicar um schema (rodar migration)',
   })
+  @ApiParam({ name: 'databaseId', description: 'ID do banco de dados' })
+  @ApiParam({ name: 'id', description: 'ID do schema' })
   @ApiCreatedResponse({ description: 'Schema aplicado com sucesso' })
   @ApiBadRequestResponse({ description: 'Erro ao aplicar schema' })
   @ApiUnauthorizedResponse({ description: 'Usuário não autorizado' })
@@ -69,6 +73,8 @@ export class SchemaController {
     summary: 'Rollback para versão anterior',
     description: 'Rota para rollback para versão anterior',
   })
+  @ApiParam({ name: 'databaseId', description: 'ID do banco de dados' })
+  @ApiParam({ name: 'version', description: 'Versão do schema' })
   @ApiCreatedResponse({ description: 'Rollback realizado com sucesso' })
   @ApiBadRequestResponse({ description: 'Erro ao realizar rollback' })
   @ApiUnauthorizedResponse({ description: 'Usuário não autorizado' })
@@ -86,6 +92,7 @@ export class SchemaController {
     summary: 'Listar versões de schema',
     description: 'Rota para listar todas as versões de schema',
   })
+  @ApiParam({ name: 'databaseId', description: 'ID do banco de dados' })
   @ApiOkResponse({ description: 'Listagem de schemas realizada com sucesso' })
   @ApiUnauthorizedResponse({ description: 'Usuário não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
