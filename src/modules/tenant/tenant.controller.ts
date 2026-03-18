@@ -18,6 +18,7 @@ import {
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
   ApiProperty,
+  ApiParam,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { IsOptional, IsString } from 'class-validator';
@@ -55,7 +56,7 @@ export class TenantController {
     return this.tenants.findOne(req.user.tenantId);
   }
 
-  @Patch('me')
+  @Patch('/me')
   @ApiOperation({
     summary: 'Atualizar perfil',
     description: 'Rota para atualizar o perfil',
@@ -83,6 +84,10 @@ export class TenantController {
   @ApiOperation({
     summary: 'Resolver alerta',
     description: 'Rota para resolver um alerta',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID do alerta',
   })
   @ApiOkResponse({ description: 'Alerta resolvido com sucesso' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })

@@ -94,8 +94,8 @@ export class SchemaController {
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   rollback(
     @Request() req: any,
-    @Param('databaseId') dbId: string,
-    @Param('version') version: number,
+    @Body('databaseId') dbId: string,
+    @Body('version') version: number,
   ) {
     return this.engine.rollback(req.user.tenantId, dbId, version);
   }

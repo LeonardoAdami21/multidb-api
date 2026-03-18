@@ -69,7 +69,7 @@ export class WebhookController {
     return this.webhooks.delete(req.user.tenantId, id);
   }
 
-  @Get(':id/deliveries')
+  @Get(':id')
   @ApiOperation({
     summary: 'Histórico de entregas do webhook',
     description: 'Rota para obter o histórico de entregas de um webhook',
