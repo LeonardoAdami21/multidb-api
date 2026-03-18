@@ -38,7 +38,7 @@ import { QueryDto } from './dto/create-query-engine.dto';
 export class QueryEngineController {
   constructor(private engine: QueryEngineService) {}
 
-  @Get(':databaseId/:model')
+  @Get('')
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
   @ApiOperation({
@@ -77,7 +77,7 @@ export class QueryEngineController {
     );
   }
 
-  @Get('/:databaseId/:model/count')
+  @Get('/count')
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
   @ApiOperation({
@@ -107,7 +107,7 @@ export class QueryEngineController {
     return this.engine.count(req.user.tenantId, dbId, model, query);
   }
 
-  @Get(':databaseId/:model/:id')
+  @Get(':id')
   @RequireScope('db:read')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Buscar registro por ID' })
@@ -147,28 +147,27 @@ export class QueryEngineController {
     );
   }
 
-  @Post('/:databaseId/:model')
+  @Post('')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar registro' })
-  @ApiParam({
-    name: 'model',
-    description: 'Modelo do banco de dados',
-    required: true,
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        databaseId: { type: 'string' },
+        model: { type: 'string' },
+      },
+    },
   })
-  @ApiParam({
-    name: 'databaseId',
-    description: 'ID do banco de dados',
-    required: true,
-  })
-  @ApiBody({ type: 'object' })
+  @ApiBody({ type: 'object', schema: { $ref: '#/definitions/QueryDto' } })
   @ApiOkResponse({ description: 'Retorna um registro criado' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   create(
     @Request() req: any,
-    @Param('databaseId') dbId: string,
-    @Param('model') model: string,
+    @Body('databaseId') dbId: string,
+    @Body('model') model: string,
     @Body() data: any,
   ) {
     return this.engine.create(
@@ -180,21 +179,20 @@ export class QueryEngineController {
     );
   }
 
-  @Post('/:databaseId/:model/bulk')
+  @Post('/bulk')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar múltiplos registros' })
-  @ApiParam({
-    name: 'model',
-    description: 'Modelo do banco de dados',
-    required: true,
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        databaseId: { type: 'string' },
+        model: { type: 'string' },
+      },
+    },
   })
-  @ApiParam({
-    name: 'databaseId',
-    description: 'ID do banco de dados',
-    required: true,
-  })
-  @ApiBody({ type: 'object' })
+  @ApiBody({ type: 'object', schema: { $ref: '#/definitions/QueryDto' } })
   @ApiOkResponse({ description: 'Retorna um registro criado' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
@@ -213,7 +211,7 @@ export class QueryEngineController {
     );
   }
 
-  @Patch(':databaseId/:model/:id')
+  @Patch(':id')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Atualizar registro parcialmente (PATCH)' })
@@ -232,7 +230,7 @@ export class QueryEngineController {
     description: 'ID do registro',
     required: true,
   })
-  @ApiBody({ type: 'object' })
+  @ApiBody({ type: 'object', schema: { $ref: '#/definitions/QueryDto' } })
   @ApiOkResponse({ description: 'Retorna um registro atualizado' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
@@ -253,15 +251,32 @@ export class QueryEngineController {
     );
   }
 
-  @Delete(':databaseId/:model/:id')
+  @Delete(':id')
   @RequireScope('db:delete')
   @UseGuards(ScopeGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Deletar registro' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        databaseId: { type: 'string' },
+        model: { type: 'string' },
+      },
+    },
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID do registro',
+    required: true,
+  })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
+  @ApiOkResponse({ description: 'Retorna um registro deletado' })
   remove(
     @Request() req: any,
-    @Param('databaseId') dbId: string,
-    @Param('model') model: string,
+    @Body('databaseId') dbId: string,
+    @Body('model') model: string,
     @Param('id') id: string,
   ) {
     return this.engine.delete(

@@ -19,6 +19,7 @@ import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiParam,
+  ApiBody,
 } from '@nestjs/swagger';
 import { CreateSchemaDto } from './dto/create-schema.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -31,7 +32,7 @@ import { SchemaService } from './schema.service';
 export class SchemaController {
   constructor(private engine: SchemaService) {}
 
-  @Post(':databaseId')
+  @Post()
   @ApiOperation({
     summary: 'Criar nova versão de schema',
     description: 'Rota para criar uma nova versão de schema',
@@ -43,38 +44,50 @@ export class SchemaController {
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   create(
     @Request() req: any,
-    @Param('databaseId') dbId: string,
+    @Body('databaseId') dbId: string,
     @Body() dto: CreateSchemaDto,
   ) {
     return this.engine.create(req.user.tenantId, dbId, dto);
   }
 
-  @Post(':databaseId/:id/apply')
+  @Post('/apply')
   @ApiOperation({
     summary: 'Aplicar schema (rodar migration)',
     description: 'Rota para aplicar um schema (rodar migration)',
   })
-  @ApiParam({ name: 'databaseId', description: 'ID do banco de dados' })
-  @ApiParam({ name: 'id', description: 'ID do schema' })
+  @ApiBody({
+    schema: {
+      properties: {
+        databaseId: { type: 'string', description: 'ID do banco de dados' },
+        id: { type: 'string', description: 'ID do schema' },
+      },
+    },
+  })
   @ApiCreatedResponse({ description: 'Schema aplicado com sucesso' })
   @ApiBadRequestResponse({ description: 'Erro ao aplicar schema' })
   @ApiUnauthorizedResponse({ description: 'Usuário não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   apply(
     @Request() req: any,
-    @Param('databaseId') dbId: string,
-    @Param('id') id: string,
+    @Body('databaseId') dbId: string,
+    @Body('id') id: string,
   ) {
     return this.engine.applySchema(req.user.tenantId, dbId, id);
   }
 
-  @Post(':databaseId/:version/rollback')
+  @Post('/rollback')
+  @ApiBody({
+    schema: {
+      properties: {
+        databaseId: { type: 'string', description: 'ID do banco de dados' },
+        version: { type: 'number', description: 'Versão do schema' },
+      },
+    },
+  })
   @ApiOperation({
     summary: 'Rollback para versão anterior',
     description: 'Rota para rollback para versão anterior',
   })
-  @ApiParam({ name: 'databaseId', description: 'ID do banco de dados' })
-  @ApiParam({ name: 'version', description: 'Versão do schema' })
   @ApiCreatedResponse({ description: 'Rollback realizado com sucesso' })
   @ApiBadRequestResponse({ description: 'Erro ao realizar rollback' })
   @ApiUnauthorizedResponse({ description: 'Usuário não autorizado' })
@@ -87,7 +100,7 @@ export class SchemaController {
     return this.engine.rollback(req.user.tenantId, dbId, version);
   }
 
-  @Get(':databaseId')
+  @Get('')
   @ApiOperation({
     summary: 'Listar versões de schema',
     description: 'Rota para listar todas as versões de schema',
