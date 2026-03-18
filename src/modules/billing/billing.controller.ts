@@ -16,6 +16,7 @@ import {
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
   ApiCreatedResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { BillingService } from './billing.service';
@@ -34,7 +35,7 @@ class ChangePlanDto {
 export class BillingController {
   constructor(private billing: BillingService) {}
 
-  @Get('usage')
+  @Get('/usage')
   @ApiOperation({
     summary: 'Ver uso atual e quotas',
     description: 'Rota atual e as quotas',
@@ -46,13 +47,14 @@ export class BillingController {
     return this.billing.getUsage(req.user.tenantId);
   }
 
-  @Post('plan')
+  @Post('/plan')
   @ApiOperation({
     summary: 'Alterar plano',
     description: 'Rota para alterar o plano',
   })
   @ApiCreatedResponse({ description: 'Plano alterado com sucesso' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiBadRequestResponse({ description: 'Plano inválido' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   changePlan(@Request() req: any, @Body() dto: ChangePlanDto) {
     return this.billing.changePlan(req.user.tenantId, dto.plan);
