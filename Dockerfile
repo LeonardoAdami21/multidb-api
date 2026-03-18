@@ -5,34 +5,25 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Enable corepack (Yarn managed properly)
-RUN corepack enable
-
-# Install deps
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-# Create non-root user
 RUN addgroup -S nodejs && adduser -S nestjs -G nodejs
 
-# Copy configs
 COPY tsconfig*.json ./
 COPY prisma ./prisma
 
-RUN chown -R nestjs:nodejs /app
+RUN chown -R nestjs:nodejs /app && chmod 1777 /tmp
 
-# Proper tmp permissions (important!)
-RUN chmod 1777 /tmp
+# ✅ CORREÇÃO PRINCIPAL: define cache do Yarn dentro do /app
+# onde o usuário nestjs tem permissão de escrita
+ENV YARN_CACHE_FOLDER=/app/.yarn-cache
 
-# Switch to non-root
 USER nestjs
 
-
-# Generate Prisma client
 RUN npx prisma generate
 
-# Copy source and build
-COPY src ./src
+COPY --chown=nestjs:nodejs src ./src
 RUN yarn build
 
 # ============================================
@@ -42,25 +33,17 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Only required runtime dependency
 RUN apk add --no-cache openssl
 
-# Create non-root user
 RUN addgroup -S nodejs && adduser -S nestjs -G nodejs
 
-# Copy ONLY what we need
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-# Fix permissions safely
-RUN chown -R nestjs:nodejs /app
+RUN chown -R nestjs:nodejs /app && chmod 1777 /tmp
 
-# Proper tmp permissions (important!)
-RUN chmod 1777 /tmp
-
-# Switch to non-root
 USER nestjs
 
 EXPOSE 7000
