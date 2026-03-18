@@ -35,7 +35,7 @@ class ChangePlanDto {
 export class BillingController {
   constructor(private billing: BillingService) {}
 
-  @Get('/usage')
+  @Get('')
   @ApiOperation({
     summary: 'Ver uso atual e quotas',
     description: 'Rota atual e as quotas',
@@ -47,7 +47,7 @@ export class BillingController {
     return this.billing.getUsage(req.user.tenantId);
   }
 
-  @Post('/plan')
+  @Post('')
   @ApiOperation({
     summary: 'Alterar plano',
     description: 'Rota para alterar o plano',
