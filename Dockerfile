@@ -31,7 +31,10 @@ RUN addgroup --system --gid 1001 nestjs && \
     adduser  --system --uid 1001 --ingroup nestjs nestjs
 
 COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile && yarn cache clean
+RUN yarn install --production --frozen-lockfile && \
+    yarn cache clean && \
+    chown nestjs:nestjs /tmp && \
+    chmod 700 /tmp
 
 COPY --from=builder /usr/src/app/dist         ./dist
 COPY --from=builder /usr/src/app/prisma       ./prisma
