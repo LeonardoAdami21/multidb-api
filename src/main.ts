@@ -3,17 +3,25 @@ import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { winstonConfig } from './config/wiston.config';
 import { HttpExceptionFilter } from './common/filters/http-exepction';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
+import express from 'express';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger(winstonConfig),
-  });
+const expressApp = express();
+
+export async function createApp() {
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(expressApp),
+    {
+      logger: WinstonModule.createLogger(winstonConfig),
+    },
+  );
+
   app.enableVersioning({ type: VersioningType.URI });
-
   app.setGlobalPrefix('v1');
 
   app.enableCors({
@@ -37,8 +45,6 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new HttpExceptionFilter());
-
-  // Global interceptors
   app.useGlobalInterceptors(
     new TransformInterceptor(),
     new MetricsInterceptor(),
@@ -65,12 +71,20 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/v1/docs', app, document);
 
-  const port = process.env.APP_PORT || 3000;
-  await app.listen(port, '0.0.0.0', () => {
-    console.log(`Application is running on: http://localhost:${port}/v1/docs`);
+  await app.init();
+  return expressApp;
+}
+
+// Local development only
+if (require.main === module) {
+  createApp().then((server) => {
+    const port = process.env.APP_PORT || 3000;
+    server.listen(port, () => {
+      console.log(`Running on: http://localhost:${port}/v1/docs`);
+    });
   });
 }
-bootstrap();
