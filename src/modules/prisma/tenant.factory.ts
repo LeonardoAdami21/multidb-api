@@ -24,7 +24,7 @@ export class TenantFactory implements OnModuleDestroy {
     setInterval(() => this.cleanIdleConnections(), 60_000);
   }
 
-  async getClient(tenantId: string, databaseId: string): Promise<PrismaClient> {
+  async getClient(tenantId: string, databaseId: string) {
     const poolKey = `${tenantId}:${databaseId}`;
 
     if (this.pool.has(poolKey)) {
@@ -33,7 +33,7 @@ export class TenantFactory implements OnModuleDestroy {
       return entry.client;
     }
 
-    const db = await this.prisma.database.findFirstOrThrow({
+    let db: any = await this.prisma.database.findFirst({
       where: { id: databaseId, tenantId, status: 'ACTIVE' },
     });
 

@@ -7,9 +7,11 @@ import {
 } from '@nestjs/common';
 import { TenantFactory } from '../../prisma/tenant.factory';
 import { WebhookService } from 'src/modules/webhook/webhook.service';
-import { QueryDto } from '../dto/create-query-engine.dto';
 import { CacheService } from '../cache.service';
 import { AuditService } from 'src/modules/audit/audit.service';
+import { QueryDto } from '../dto/query.dto';
+import { CreateQueryEngineDto } from '../dto/create-query-engine.dto';
+import { UpdateQueryEngineDto } from '../dto/update-query-engine.dto';
 
 @Injectable()
 export class QueryEngineRepository {
@@ -73,13 +75,8 @@ export class QueryEngineRepository {
     return data;
   }
 
-  async create(
-    tenantId: string,
-    databaseId: string,
-    model: string,
-    data: any,
-    apiKeyId?: string,
-  ) {
+  async create(dto: CreateQueryEngineDto) {
+    const { tenantId, databaseId, model, data, apiKeyId } = dto;
     const client = await this.tenantFactory.getClient(tenantId, databaseId);
     this.validateModel(client, model);
 
@@ -94,14 +91,8 @@ export class QueryEngineRepository {
     return result;
   }
 
-  async update(
-    tenantId: string,
-    databaseId: string,
-    model: string,
-    id: string,
-    data: any,
-    apiKeyId?: string,
-  ) {
+  async update(dto: UpdateQueryEngineDto, id: string) {
+    const { tenantId, databaseId, model, data, apiKeyId } = dto;
     const client = await this.tenantFactory.getClient(tenantId, databaseId);
     this.validateModel(client, model);
 
@@ -185,12 +176,10 @@ export class QueryEngineRepository {
   }
 
   async bulkCreate(
-    tenantId: string,
-    databaseId: string,
-    model: string,
+    dto: CreateQueryEngineDto,
     items: any[],
-    apiKeyId?: string,
   ) {
+    const { tenantId, databaseId, model, apiKeyId } = dto;
     const client = await this.tenantFactory.getClient(tenantId, databaseId);
     this.validateModel(client, model);
 
