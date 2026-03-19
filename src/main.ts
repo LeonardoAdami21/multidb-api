@@ -55,7 +55,7 @@ async function bootstrap() {
     .addTag('metrics', 'Modulo de Metricas')
     .addTag('data', 'Modulo de Schema Engine')
     .addTag('schema', 'Modulo de Schema')
-    .addTag("sdk", "Modulo de SDK")
+    .addTag('sdk', 'Modulo de SDK')
     .addTag('tenant', 'Modulo de Tenants')
     .addTag('webhook', 'Modulo de Webhooks')
     .addBearerAuth()
@@ -71,6 +71,9 @@ async function bootstrap() {
   const port = process.env.APP_PORT || 3000;
   await app.listen(port, () => {
     console.log(`Application is running on: http://localhost:${port}/v1/docs`);
+    console.log(
+      `Production application is running on: https://api-dev.multibd.me/v1/docs`,
+    );
   });
 }
 bootstrap();
