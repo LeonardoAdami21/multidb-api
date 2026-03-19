@@ -69,7 +69,7 @@ async function bootstrap() {
   SwaggerModule.setup('/v1/docs', app, document);
 
   const port = process.env.APP_PORT || 3000;
-  await app.listen(port, () => {
+  await app.listen(port, "0.0.0.0",() => {
     console.log(`Application is running on: http://localhost:${port}/v1/docs`);
     console.log(
       `Production application is running on: https://api-dev.multibd.me/v1/docs`,
