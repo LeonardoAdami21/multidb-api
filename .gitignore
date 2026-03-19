@@ -65,3 +65,5 @@ infra
 promdata
 backup_data
 .vercel
+
+prisma/generated

@@ -29,7 +29,9 @@ import { QueryEngineService } from './query-engine.service';
 import { ApiKeyGuard } from '../../common/guards/api-key.guard';
 import { ScopeGuard } from '../../common/guards/scope.guard';
 import { RequireScope } from '../../common/decorators/scope.decorator';
-import { QueryDto } from './dto/create-query-engine.dto';
+import { QueryDto } from './dto/query.dto';
+import { CreateQueryEngineDto } from './dto/create-query-engine.dto';
+import { UpdateQueryEngineDto } from './dto/update-query-engine.dto';
 
 @ApiTags('data')
 @ApiSecurity('ApiKey')
@@ -151,38 +153,33 @@ export class QueryEngineController {
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar registro' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        databaseId: { type: 'string' },
-        model: { type: 'string' },
-      },
-    },
-  })
-  @ApiBody({ type: 'object', schema: { $ref: '#/definitions/QueryDto' } })
   @ApiOkResponse({ description: 'Retorna um registro criado' })
   @ApiUnauthorizedResponse({ description: 'Não autorizado' })
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
-  create(
-    @Request() req: any,
-    @Body('databaseId') dbId: string,
-    @Body('model') model: string,
-    @Body() data: any,
-  ) {
-    return this.engine.create(
-      req.user.tenantId,
-      dbId,
-      model,
-      data,
-      req.user.keyId,
-    );
+  create(@Request() req: any, @Body() dto: CreateQueryEngineDto) {
+    return this.engine.create(dto, req.user.tenantId);
   }
 
   @Post('/bulk')
   @RequireScope('db:write')
   @UseGuards(ScopeGuard)
   @ApiOperation({ summary: 'Criar múltiplos registros' })
+  @ApiBody({ type: 'object', schema: { $ref: '#/definitions/QueryDto' } })
+  @ApiOkResponse({ description: 'Retorna um registro criado' })
+  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
+  bulkCreate(
+    @Request() req: any,
+    @Body() dto: CreateQueryEngineDto,
+    @Body() body: { items: any[] },
+  ) {
+    return this.engine.bulkCreate(req.user.tenantId, dto, body.items);
+  }
+
+  @Patch(':id')
+  @RequireScope('db:write')
+  @UseGuards(ScopeGuard)
+  @ApiOperation({ summary: 'Atualizar registro parcialmente (PATCH)' })
   @ApiBody({
     schema: {
       type: 'object',
@@ -191,39 +188,6 @@ export class QueryEngineController {
         model: { type: 'string' },
       },
     },
-  })
-  @ApiBody({ type: 'object', schema: { $ref: '#/definitions/QueryDto' } })
-  @ApiOkResponse({ description: 'Retorna um registro criado' })
-  @ApiUnauthorizedResponse({ description: 'Não autorizado' })
-  @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
-  bulkCreate(
-    @Request() req: any,
-    @Param('databaseId') dbId: string,
-    @Param('model') model: string,
-    @Body() body: { items: any[] },
-  ) {
-    return this.engine.bulkCreate(
-      req.user.tenantId,
-      dbId,
-      model,
-      body.items,
-      req.user.keyId,
-    );
-  }
-
-  @Patch(':id')
-  @RequireScope('db:write')
-  @UseGuards(ScopeGuard)
-  @ApiOperation({ summary: 'Atualizar registro parcialmente (PATCH)' })
-  @ApiParam({
-    name: 'model',
-    description: 'Modelo do banco de dados',
-    required: true,
-  })
-  @ApiParam({
-    name: 'databaseId',
-    description: 'ID do banco de dados',
-    required: true,
   })
   @ApiParam({
     name: 'id',
@@ -236,19 +200,10 @@ export class QueryEngineController {
   @ApiInternalServerErrorResponse({ description: 'Erro interno do servidor' })
   update(
     @Request() req: any,
-    @Param('databaseId') dbId: string,
-    @Param('model') model: string,
     @Param('id') id: string,
-    @Body() data: any,
+    @Body() dto: UpdateQueryEngineDto,
   ) {
-    return this.engine.update(
-      req.user.tenantId,
-      dbId,
-      model,
-      id,
-      data,
-      req.user.keyId,
-    );
+    return this.engine.update(req.user.tenantId, dto, id);
   }
 
   @Delete(':id')

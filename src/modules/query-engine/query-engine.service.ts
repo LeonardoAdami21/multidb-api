@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { QueryEngineRepository } from './repository/query-engine.repository';
 import { WebhookService } from '../webhook/webhook.service';
-import { QueryDto } from './dto/create-query-engine.dto';
 import { AuditService } from '../audit/audit.service';
+import { QueryDto } from './dto/query.dto';
+import { CreateQueryEngineDto } from './dto/create-query-engine.dto';
+import { UpdateQueryEngineDto } from './dto/update-query-engine.dto';
 
 @Injectable()
 export class QueryEngineService {
@@ -48,39 +50,13 @@ export class QueryEngineService {
     return result;
   }
 
-  async create(
-    tenantId: string,
-    databaseId: string,
-    model: string,
-    data: any,
-    apiKeyId?: string,
-  ) {
-    const result = await this.queryEngineRepository.create(
-      tenantId,
-      databaseId,
-      model,
-      data,
-      apiKeyId,
-    );
+  async create(dto: CreateQueryEngineDto,  req: any) {
+    const result = await this.queryEngineRepository.create(dto);
     return result;
   }
 
-  async update(
-    tenantId: string,
-    databaseId: string,
-    model: string,
-    id: string,
-    data: any,
-    apiKeyId?: string,
-  ) {
-    const result = await this.queryEngineRepository.update(
-      tenantId,
-      databaseId,
-      model,
-      id,
-      data,
-      apiKeyId,
-    );
+  async update(req: any, dto: UpdateQueryEngineDto, id: string) {
+    const result = await this.queryEngineRepository.update(dto, id);
     return result;
   }
 
@@ -116,20 +92,8 @@ export class QueryEngineService {
     return result;
   }
 
-  async bulkCreate(
-    tenantId: string,
-    databaseId: string,
-    model: string,
-    items: any[],
-    apiKeyId?: string,
-  ) {
-    const result = await this.queryEngineRepository.bulkCreate(
-      tenantId,
-      databaseId,
-      model,
-      items,
-      apiKeyId,
-    );
+  async bulkCreate(req: any, dto: CreateQueryEngineDto, items: any[]) {
+    const result = await this.queryEngineRepository.bulkCreate(dto, items);
     return result;
   }
 }

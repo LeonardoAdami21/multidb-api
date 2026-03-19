@@ -1,45 +1,45 @@
-// src/modules/query-engine/dto/query.dto.ts
-import { IsOptional, IsNumber, IsString, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class QueryDto {
-  @ApiPropertyOptional({
-    description: 'Filter object e.g. filter[published]=true',
+export class CreateQueryEngineDto {
+  @ApiProperty({
+    description: 'Idenificador do banco de dados',
+    example: 'my-database-id',
+    type: String,
   })
-  @IsOptional()
-  filter?: Record<string, any>;
-
-  @ApiPropertyOptional({ description: 'Order by e.g. orderBy[createdAt]=desc' })
-  @IsOptional()
-  orderBy?: Record<string, 'asc' | 'desc'>;
-
-  @ApiPropertyOptional({
-    description: 'Relations to include e.g. include=author,comments',
-  })
-  @IsOptional()
   @IsString()
-  include?: string;
+  databaseId: string;
 
-  @ApiPropertyOptional({
-    description: 'Fields to select e.g. select=id,title,createdAt',
+  @ApiProperty({
+    description: 'Idenificador do tenant',
+    example: 'my-tenant-id',
+    type: String,
+    required: true,
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  select?: string;
+  tenantId: string;
 
-  @ApiPropertyOptional({ default: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  page?: number = 1;
+  @ApiProperty({
+    description: 'Modelo do banco de dados',
+    example: 'Post',
+    type: String,
+  })
+  model: string;
 
-  @ApiPropertyOptional({ default: 20, maximum: 100 })
+  @ApiProperty({
+    description: 'Chave de API',
+    example: 'my-api-key',
+    type: String,
+  })
+  @IsString()
   @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  @Max(100)
-  limit?: number = 20;
+  apiKeyId?: string;
+
+  @ApiProperty({
+    description: 'Campos do banco de dados',
+    example: 'title',
+    type: String,
+  })
+  data: any;
 }
